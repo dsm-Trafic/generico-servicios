@@ -32,7 +32,7 @@
 - Produces: `npm run setup-hooks`, which runs `git config core.hooksPath .githooks`.
 - Consumes: root-level `AGENTS.md` and `CLAUDE.md` as UTF-8 files.
 
-- [ ] **Step 1: Write the failing checker tests**
+- [x] **Step 1: Write the failing checker tests**
 
 ```ts
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
@@ -58,12 +58,12 @@ test('guidesMatch rejects different files', () => {
 });
 ```
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Run the test to verify it fails**
 
 Run: `npx vitest run tests/unit/agent-guides.test.ts`  
 Expected: FAIL because `scripts/check-agent-guides.mjs` does not export `guidesMatch`.
 
-- [ ] **Step 3: Implement the checker, installer, hook, and scripts**
+- [x] **Step 3: Implement the checker, installer, hook, and scripts**
 
 ```js
 // scripts/check-agent-guides.mjs
@@ -89,12 +89,12 @@ make `scripts/install-git-hooks.mjs` call `git config core.hooksPath .githooks`
 with `spawnSync`. Add `docs:check-guides` and `setup-hooks` npm scripts. Create
 `CLAUDE.md` as an exact copy of the existing `AGENTS.md` before checking them.
 
-- [ ] **Step 4: Run focused verification**
+- [x] **Step 4: Run focused verification**
 
 Run: `npm run docs:check-guides; npm test -- --run tests/unit/agent-guides.test.ts`  
 Expected: both commands exit `0`.
 
-- [ ] **Step 5: Commit the hook feature**
+- [x] **Step 5: Commit the hook feature**
 
 ```bash
 git add package.json scripts/check-agent-guides.mjs scripts/install-git-hooks.mjs .githooks/pre-commit tests/unit/agent-guides.test.ts
@@ -117,7 +117,7 @@ git commit -m "chore: enforce synchronized agent guides"
 - Produces: one canonical document for each architecture, current-state, and decision concern.
 - Consumes: factual implementation details in `src/lib/db.ts`, `src/lib/auth.ts`, and `package.json`.
 
-- [ ] **Step 1: Write the required documentation content**
+- [x] **Step 1: Write the required documentation content**
 
 Document Next.js App Router pages, server actions, SQLite via `better-sqlite3`,
 signed-cookie role sessions, scripts, tests, and the local-only deployment
@@ -125,7 +125,7 @@ boundary. Describe the database and authentication decisions with context,
 choice, consequences, and review conditions. Move the Spanish status content
 into `docs/current-state.md`; do not discard facts that remain applicable.
 
-- [ ] **Step 2: Mirror the contributor guide exactly**
+- [x] **Step 2: Mirror the contributor guide exactly**
 
 ```powershell
 Copy-Item AGENTS.md CLAUDE.md -Force
@@ -134,7 +134,7 @@ npm run docs:check-guides
 
 Expected: the checker exits `0`; each guide has the same bytes.
 
-- [ ] **Step 3: Document hook installation and change discipline in README**
+- [x] **Step 3: Document hook installation and change discipline in README**
 
 Add this local setup step after dependency installation:
 
@@ -146,13 +146,13 @@ State that each code, configuration, architecture, or operational change must
 also update its applicable document: `architecture.md`, `current-state.md`, an
 ADR under `docs/decisions/`, or the appropriate plan.
 
-- [ ] **Step 4: Verify the documentation layout**
+- [x] **Step 4: Verify the documentation layout**
 
 Run: `npm run docs:check-guides; rg --files docs | Sort-Object`  
 Expected: `architecture.md`, `current-state.md`, both numbered decisions, and
 historical plans are present; `ESTADO-DEL-PROYECTO.md` is absent.
 
-- [ ] **Step 5: Commit the documentation migration**
+- [x] **Step 5: Commit the documentation migration**
 
 ```bash
 git add AGENTS.md CLAUDE.md README.md docs
@@ -168,27 +168,27 @@ git commit -m "docs: organize project documentation"
 - Consumes: `.githooks/pre-commit` and `scripts/check-agent-guides.mjs`.
 - Produces: an active pre-commit guard for this clone.
 
-- [ ] **Step 1: Install the hook path**
+- [x] **Step 1: Install the hook path**
 
 Run: `npm run setup-hooks`  
 Expected: command exits `0` and `git config --get core.hooksPath` prints `.githooks`.
 
-- [ ] **Step 2: Verify the hook accepts the synchronized repository**
+- [x] **Step 2: Verify the hook accepts the synchronized repository**
 
-Run: `node .githooks/pre-commit`  
+Run: `sh .githooks/pre-commit`  
 Expected: exit `0` with no error message.
 
-- [ ] **Step 3: Run the full quality suite**
+- [x] **Step 3: Run the full quality suite**
 
 Run: `npm test; npm run lint; npm run build`  
 Expected: all commands exit `0`.
 
-- [ ] **Step 4: Record activation state**
+- [x] **Step 4: Record activation state**
 
 Add a brief entry to `docs/current-state.md` stating that the hook is installed
 in this local clone and that new clones must run `npm run setup-hooks`.
 
-- [ ] **Step 5: Commit the activation note**
+- [x] **Step 5: Commit the activation note**
 
 ```bash
 git add docs/current-state.md

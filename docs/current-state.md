@@ -30,7 +30,8 @@ demostración y recoger ajustes de campos, nombres o pasos.
 ## Calidad y documentación
 
 La suite Vitest cubre importes, saldos, permisos y la igualdad de guías. Usar
-`npm test`, `npm run lint` y `npm run build` antes de entregar cambios. Este clon
-tiene el hook versionado disponible; ejecutar `npm run setup-hooks` activa su
-ruta en la configuración Git local. `AGENTS.md` y `CLAUDE.md` son iguales y el
-hook rechaza un commit cuando dejan de serlo.
+`npm test`, `npm run lint` y `npm run build` antes de entregar cambios. En este
+clon el hook está activado con `core.hooksPath = .githooks`; cada clon nuevo debe
+ejecutar `npm run setup-hooks`. `AGENTS.md` y `CLAUDE.md` son iguales y el hook
+rechaza un commit cuando dejan de serlo. La verificación completa más reciente
+terminó correctamente: 7 pruebas, lint y build.
