@@ -175,7 +175,7 @@ Expected: command exits `0` and `git config --get core.hooksPath` prints `.githo
 
 - [x] **Step 2: Verify the hook accepts the synchronized repository**
 
-Run: `sh .githooks/pre-commit`  
+Run: `sh .githooks/pre-commit`
 Expected: exit `0` with no error message.
 
 - [x] **Step 3: Run the full quality suite**
