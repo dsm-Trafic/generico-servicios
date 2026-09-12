@@ -29,34 +29,32 @@ No forman parte de esta etapa: facturas, impuestos, contabilidad, nóminas, ruta
 - `docs/plans/2026-09-12-partes-trabajo-local-design.md`: diseño funcional validado.
 - `docs/superpowers/plans/2026-09-12-partes-trabajo-local.md`: plan técnico por tareas, pruebas y criterios de aceptación.
 
-## Trabajo iniciado, aún sin validar
+## Primera etapa implementada
 
-En `feat/local-app-implementation` existen cambios sin commit que preparan la primera tarea del plan:
+La rama `feat/local-app-implementation` contiene una aplicación local funcional con:
 
-- Configuración de Next.js, TypeScript, ESLint, scripts npm y `.env.example`.
-- Esquema inicial de Prisma/SQLite para usuarios, clientes, partes, materiales, movimientos financieros y presupuestos.
-- Utilidad para manejar importes UYU en centésimos y su prueba unitaria.
+- inicio y cierre de sesión con una cuenta de oficina y tres de técnico;
+- panel diferenciado por rol y permisos aplicados en el servidor;
+- alta, búsqueda e historial terminado de clientes;
+- creación, asignación, inicio y cierre de partes;
+- materiales, cobros, financiación y saldo pendiente;
+- cobros aplicados a otro parte del mismo cliente;
+- presupuestos borrador creados por oficina desde una visita;
+- base SQLite persistente y reinicio manual controlado.
 
-Estos archivos no deben considerarse terminados todavía: no se ha podido ejecutar la migración, las pruebas, el linter ni la compilación.
+La base se inicializa directamente con `better-sqlite3`. El ejecutable de migraciones de Prisma 7 no pudo crear SQLite en este Windows, aunque su esquema y generador funcionaban; evitar ese ejecutable eliminó el bloqueo sin cambiar el alcance funcional.
 
-## Bloqueo actual
+## Verificación realizada
 
-La versión instalada de npm (`10.9.4`, junto con Node 22.21.0) falla al resolver o finalizar dependencias. El primer error fue:
+- Node.js `24.21.0`, npm `11.19.0` y Next.js `16.3.5`.
+- `npm test`: 5 pruebas aprobadas.
+- `npm run lint`: sin errores.
+- `npm run build`: compilación completa sin advertencias.
+- Prueba navegada: acceso de oficina y técnico, cliente, parte asignado, material, cobro, financiación, cierre, aislamiento entre técnicos y presupuesto.
 
-```text
-Cannot read properties of null (reading 'edgesOut')
-```
+## Próximo paso
 
-Un segundo intento con `npm install --legacy-peer-deps` descargó paquetes, pero dejó dependencias inconsistentes; `npm ls` marcó Next.js como inválido. No se debe continuar la implementación ni confirmar estos archivos como funcionales hasta reparar Node.js y npm.
-
-## Siguiente paso seguro
-
-1. Instalar `node-v24.21.0-x64.msi` desde la página oficial de Node.js, con npm incluido.
-2. Cerrar y volver a abrir Codex o el terminal para cargar la nueva instalación.
-3. Ejecutar `node --version` y `npm --version` y confirmar que ambos responden.
-4. Eliminar solo `node_modules` y `package-lock.json` del proyecto si existen, y ejecutar `npm install`.
-5. Copiar `.env.example` como `.env`, generar un secreto local para `BETTER_AUTH_SECRET` y ejecutar la migración SQLite.
-6. Retomar el plan desde la tarea 1 y no pasar a autenticación hasta que las pruebas de importes, el linter y la migración pasen.
+El usuario debe recorrer la aplicación local con las cuentas documentadas en `README.md` y anotar ajustes de nombres, campos o flujo. Después de esa validación se priorizará la siguiente evolución; el despliegue a VPS continúa fuera de esta etapa.
 
 ## Precaución sobre el directorio temporal
 

@@ -1,6 +1,7 @@
 {
   "name": "generico-servicios",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,21 +10,15 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "db:migrate": "prisma migrate dev",
-    "db:seed": "tsx prisma/seed.ts",
-    "db:reset": "prisma migrate reset --force --skip-generate && tsx prisma/seed.ts"
+    "db:init": "tsx scripts/init-db.ts",
+    "db:reset": "tsx scripts/reset-db.ts"
   },
   "dependencies": {
-    "@better-auth/prisma-adapter": "^1.7.4",
-    "@prisma/adapter-better-sqlite3": "^7.10.0",
-    "@prisma/client": "^7.10.0",
-    "better-auth": "^1.7.4",
     "better-sqlite3": "^12.11.1",
     "dotenv": "^17.4.2",
     "next": "^16.3.5",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "zod": "^4.6.2"
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
@@ -33,7 +28,6 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.3.5",
-    "prisma": "^7.10.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.1.0"
