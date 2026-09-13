@@ -1,47 +1,59 @@
 # Genérico Servicios
 
-Primera etapa local de una aplicación para gestionar clientes, partes de trabajo, materiales, cobros, financiación y presupuestos.
+Aplicación local para administrar el ciclo completo de un servicio técnico:
+clientes, citas, trabajos con varias visitas, materiales, cobros, financiación,
+deudas y reportes. Oficina y los técnicos trabajan con permisos diferentes sobre
+la misma base SQLite del ordenador.
 
-## Arranque local
+## Puesta en marcha
 
-1. Instalar Node.js 24 LTS.
-2. Ejecutar **npm install**.
-3. Ejecutar **npm run setup-hooks** para activar la validación de las guías en este clon.
-4. Copiar **.env.example** como **.env**.
-5. Ejecutar **npm run db:init**.
-6. Ejecutar **npm run dev**.
-7. Abrir la dirección local que muestra Next.js.
+Requiere Node.js 24 LTS. En PowerShell:
 
-## Cuentas de prueba
+```powershell
+npm install
+npm run setup-hooks
+Copy-Item .env.example .env
+npm run db:init
+npm run dev
+```
 
-- Oficina: **admin@example.local** / **Cambiar-Admin-123**
-- Técnico 1: **tecnico1@example.local** / **Cambiar-Tecnico-123**
-- Técnico 2: **tecnico2@example.local** / **Cambiar-Tecnico-123**
-- Técnico 3: **tecnico3@example.local** / **Cambiar-Tecnico-123**
+Abre la dirección que muestre Next.js, normalmente `http://localhost:3000`.
+Si ese puerto está ocupado elegirá otro automáticamente.
 
-Son credenciales locales de demostración. Para cambiarlas, editar **.env** antes de inicializar una base nueva.
+## Cuentas locales
 
-## Datos
+| Nivel | Correo | Contraseña |
+| --- | --- | --- |
+| Oficina | `admin@example.local` | `Cambiar-Admin-123` |
+| Técnico 1 | `tecnico1@example.local` | `Cambiar-Tecnico-123` |
+| Técnico 2 | `tecnico2@example.local` | `Cambiar-Tecnico-123` |
+| Técnico 3 | `tecnico3@example.local` | `Cambiar-Tecnico-123` |
 
-La base está en **data/generico-servicios.db** y se conserva entre reinicios. Para comenzar de cero, detener la aplicación y ejecutar deliberadamente **npm run db:reset**. Para hacer una copia, detener la aplicación y copiar el archivo de base a otra carpeta.
+Son credenciales de demostración. Deben reemplazarse antes de un despliegue.
 
-## Verificación
+## Flujo recomendado de prueba
 
-- **npm test**: reglas de importes, saldos y permisos.
-- **npm run lint**: análisis estático.
-- **npm run build**: compilación completa.
-- **npm run docs:check-guides**: confirma que `AGENTS.md` y `CLAUDE.md` son idénticos.
+1. Como Oficina, crea un cliente, proveedor y material.
+2. Agenda una cita, asigna un técnico y crea el trabajo desde la cita.
+3. Como Técnico, inicia la visita y fija el total y la modalidad de cobro.
+4. Registra materiales, pagos y el resultado de cada visita.
+5. Termina el trabajo, incluso si conserva saldo, y consulta el aviso de deuda.
+6. Como Oficina, revisa los informes por cliente, técnico y material.
 
-## Documentación del proyecto
+## Datos y verificación
 
-- `docs/architecture.md`: estructura técnica y límites de la aplicación.
-- `docs/current-state.md`: alcance, estado verificable y operación local actual.
-- `docs/decisions/`: decisiones técnicas duraderas, numeradas como ADR.
-- `docs/plans/` y `docs/superpowers/plans/`: diseño y planes históricos.
+La base persistente está en `data/generico-servicios.db` y no se versiona. Para
+empezar de cero, detén la aplicación y ejecuta `npm run db:reset`. Para conservar
+una copia, detén la aplicación y copia ese archivo.
 
-Todo cambio funcional, técnico, operativo o de alcance debe actualizar su
-documento correspondiente. Si se modifica `AGENTS.md` o `CLAUDE.md`, hay que
-actualizar ambos y ejecutar **npm run docs:check-guides**; el hook `pre-commit`
-bloquea los commits con guías distintas una vez activado.
+```powershell
+npm run docs:check-guides
+npm test
+npm run lint
+npm run build
+```
 
-La implementación local utiliza SQLite directamente porque el ejecutable de migraciones de Prisma 7 falló en este entorno Windows. El modelo funcional sigue siendo portable; PostgreSQL y el VPS se abordarán después de validar esta etapa.
+La documentación viva está en `docs/architecture.md`, `docs/current-state.md` y
+`docs/decisions/`. Todo cambio debe actualizar el documento correspondiente.
+`AGENTS.md` y `CLAUDE.md` deben permanecer idénticos; el hook `pre-commit` lo
+comprueba después de ejecutar `npm run setup-hooks`.

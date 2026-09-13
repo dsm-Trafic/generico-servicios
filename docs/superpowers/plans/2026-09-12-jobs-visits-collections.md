@@ -36,7 +36,7 @@
 - Consumes: an open `better-sqlite3` connection.
 - Produces tables: `users`, `clients`, `suppliers`, `materials`, `work_orders`, `appointments`, `visits`, `material_usages`, `payments`, `budgets`, and `budget_lines`.
 
-- [ ] **Step 1: Write a failing in-memory schema test**
+- [x] **Step 1: Write a failing in-memory schema test**
 
 ```ts
 import Database from 'better-sqlite3';
@@ -55,12 +55,12 @@ it('creates every operational table', () => {
 });
 ```
 
-- [ ] **Step 2: Verify the schema test fails**
+- [x] **Step 2: Verify the schema test fails**
 
 Run: `npx vitest run tests/unit/schema.test.ts`  
 Expected: FAIL because `src/lib/schema.ts` does not exist.
 
-- [ ] **Step 3: Implement the normalized schema**
+- [x] **Step 3: Implement the normalized schema**
 
 Use nullable `total_cents`, `collection_mode`, and `planned_installments` on
 `work_orders` until the first visit is completed. Add checks for the approved
@@ -145,7 +145,7 @@ export function initializeSchema(database: Database.Database) {
 }
 ```
 
-- [ ] **Step 4: Connect runtime initialization and reset behaviour**
+- [x] **Step 4: Connect runtime initialization and reset behaviour**
 
 ```ts
 // src/lib/db.ts
@@ -157,7 +157,7 @@ ensureSeedData();
 Make `scripts/reset-db.ts` close its connection, remove only the resolved file
 inside `data/`, reopen through `src/lib/db.ts`, and print the final path.
 
-- [ ] **Step 5: Verify and commit the schema**
+- [x] **Step 5: Verify and commit the schema**
 
 Run: `npx vitest run tests/unit/schema.test.ts`  
 Expected: PASS.
@@ -178,7 +178,7 @@ git commit -m "feat: add jobs and visits schema"
 **Interfaces:**
 - Produces: `assertCanManageVisit`, `assertCanRecordPayment`, `assertWorkOrderTerms`, `remainingBalance`, and `statusDisplay`.
 
-- [ ] **Step 1: Add failing policy tests**
+- [x] **Step 1: Add failing policy tests**
 
 ```ts
 it('allows only the assigned technician to record a payment', () => {
@@ -196,12 +196,12 @@ it('requires terms on the first completed visit', () => {
 });
 ```
 
-- [ ] **Step 2: Verify the policy tests fail**
+- [x] **Step 2: Verify the policy tests fail**
 
 Run: `npx vitest run tests/unit/rules.test.ts`  
 Expected: FAIL for the new missing exports.
 
-- [ ] **Step 3: Implement minimal pure rules and status labels**
+- [x] **Step 3: Implement minimal pure rules and status labels**
 
 ```ts
 export function assertCanRecordPayment(role: 'ADMIN' | 'TECNICO', userId: string, technicianId: string) {
@@ -217,7 +217,7 @@ export function assertWorkOrderTerms(totalCents: number | null, mode: string | n
 Map `PENDIENTE`, `EN_PROCESO`, and `TERMINADO` to readable labels and visual
 tones `pending`, `active`, and `complete` in `work-order-display.ts`.
 
-- [ ] **Step 4: Verify and commit domain rules**
+- [x] **Step 4: Verify and commit domain rules**
 
 Run: `npx vitest run tests/unit/rules.test.ts tests/unit/work-order-display.test.ts`  
 Expected: PASS.
@@ -245,7 +245,7 @@ git commit -m "feat: enforce visit and collection rules"
 - Produces: `requiredText(data, key)` and `optionalText(data, key)` form helpers.
 - Produces Server Actions: `createClient`, `updateClient`, `archiveClient`, `createSupplier`, `updateSupplier`, `deleteOrArchiveSupplier`, `createMaterial`, `updateMaterial`, and `deleteOrArchiveMaterial`.
 
-- [ ] **Step 1: Implement client actions with role checks**
+- [x] **Step 1: Implement client actions with role checks**
 
 ```ts
 // src/app/actions/form-data.ts
@@ -275,7 +275,7 @@ Move `loginAction` and `logoutAction` unchanged into `src/app/actions/auth.ts`,
 then update the login page and `AppShell` imports before removing the legacy
 action module in Task 5.
 
-- [ ] **Step 2: Implement catalog actions and historical deletion rules**
+- [x] **Step 2: Implement catalog actions and historical deletion rules**
 
 For a material, check `material_usages`; delete only when count is zero, otherwise
 set `status='ARCHIVADO'`. For a supplier, check associated materials and apply
@@ -288,7 +288,7 @@ if (usageCount.count === 0) db.prepare('DELETE FROM materials WHERE id=?').run(m
 else db.prepare("UPDATE materials SET status='ARCHIVADO' WHERE id=?").run(materialId);
 ```
 
-- [ ] **Step 3: Build client and catalog pages**
+- [x] **Step 3: Build client and catalog pages**
 
 Create edit/archive controls on the client detail page, supplier fields `name`,
 `phone`, `email`, `notes`, and material fields `name`, `model`, `supplierId`, and
@@ -306,7 +306,7 @@ Create edit/archive controls on the client detail page, supplier fields `name`,
 </form>
 ```
 
-- [ ] **Step 4: Verify and commit master-data management**
+- [x] **Step 4: Verify and commit master-data management**
 
 Run: `npm run lint; npm run build`  
 Expected: both exit `0`.
@@ -330,7 +330,7 @@ git commit -m "feat: add client and material management"
 - Produces: `createAppointment`, `updateAppointment`, `rescheduleAppointment`, `cancelAppointment`, and `clientDebtSummary`.
 - Appointment statuses: `PENDIENTE_AGENDAR`, `AGENDADA`, `REAGENDADA`, `REALIZADA`, `CANCELADA`.
 
-- [ ] **Step 1: Test debt aggregation**
+- [x] **Step 1: Test debt aggregation**
 
 ```ts
 it('reports debt only from completed work with unpaid balance', () => {
@@ -341,7 +341,7 @@ it('reports debt only from completed work with unpaid balance', () => {
 });
 ```
 
-- [ ] **Step 2: Implement append-preserving appointment actions**
+- [x] **Step 2: Implement append-preserving appointment actions**
 
 ```ts
 export function clientDebtSummary(rows: Array<{ status: string; totalCents: number; paidCents: number }>) {
@@ -378,7 +378,7 @@ export async function cancelAppointment(id: string, data: FormData) {
 }
 ```
 
-- [ ] **Step 3: Build appointment list and detail pages**
+- [x] **Step 3: Build appointment list and detail pages**
 
 Show status, client, technician, date/time, work link, and notes. On both list and
 detail, show a red debt notice when `completedDebtCents > 0`, including amount
@@ -393,7 +393,7 @@ and number of completed unpaid jobs.
 )}
 ```
 
-- [ ] **Step 4: Verify and commit appointments**
+- [x] **Step 4: Verify and commit appointments**
 
 Run: `npx vitest run tests/unit/debts.test.ts; npm run lint; npm run build`  
 Expected: all commands pass.
@@ -416,7 +416,7 @@ git commit -m "feat: add appointments and debt alerts"
 - Produces: `createWorkOrder`, `createVisit`, `completeVisit`, `addMaterialUsage`, `recordPayment`, and `createBudget`.
 - Consumes: active clients, active materials, fixed technicians, rules from Task 2, and appointments from Task 4.
 
-- [ ] **Step 1: Implement transactional visit completion**
+- [x] **Step 1: Implement transactional visit completion**
 
 ```ts
 const complete = db.transaction(() => {
@@ -434,7 +434,7 @@ Validate end time after start time. Preserve the assigned technician. Only the
 assigned technician may complete visits, consume materials, or record payment.
 Office and that technician may create subsequent scheduled visits.
 
-- [ ] **Step 2: Record real payments and material snapshots**
+- [x] **Step 2: Record real payments and material snapshots**
 
 Before payment insert, calculate `total_cents - SUM(payments.amount_cents)` and
 reject excess. Insert materials using the selected active material and copy its
@@ -451,7 +451,7 @@ db.prepare(`INSERT INTO material_usages
   VALUES (?,?,?,?,?,?)`).run(uid(), visitId, material.id, user.id, quantity, material.cost_cents);
 ```
 
-- [ ] **Step 3: Build the job and visit interface**
+- [x] **Step 3: Build the job and visit interface**
 
 Create approved type selectors, first-visit terms (`CONTADO`, `FINANCIADO`,
 `DEUDA_ABIERTA`), optional installment count, optional payment, optional material
@@ -467,7 +467,7 @@ regardless of technician. A finished job may retain and display debt.
 </label>
 ```
 
-- [ ] **Step 4: Verify role flows and commit**
+- [x] **Step 4: Verify role flows and commit**
 
 Run: `npm test; npm run lint; npm run build`  
 Expected: all pass; manual Office access cannot expose payment actions.
@@ -489,7 +489,7 @@ git commit -m "feat: add multi-visit work orders"
 - Produces query functions `clientWorkReport`, `clientDebtReport`, `technicianWorkReport`, `materialUsageReport`, and `catalogReport`.
 - Consumes filters `{ from?: string; to?: string; clientId?: string; technicianId?: string; status?: string; materialId?: string; supplierId?: string }`.
 
-- [ ] **Step 1: Write grouped-total report tests**
+- [x] **Step 1: Write grouped-total report tests**
 
 ```ts
 it('returns client subtotals and a grand debt total', () => {
@@ -513,7 +513,7 @@ it('returns client subtotals and a grand debt total', () => {
 });
 ```
 
-- [ ] **Step 2: Implement parameterized report queries**
+- [x] **Step 2: Implement parameterized report queries**
 
 Build SQL conditions and parameters from supplied filters only. Calculate totals
 from payments, never financing terms. Group job totals by client or technician
@@ -551,7 +551,7 @@ export function clientDebtReport(database: Database.Database, filters: ReportFil
 }
 ```
 
-- [ ] **Step 3: Build one report hub with five views**
+- [x] **Step 3: Build one report hub with five views**
 
 Use `searchParams` for type and filters so results are linkable. Render clients
 with detailed jobs, debt/financing, work by technician, material usage, and
@@ -572,7 +572,7 @@ material/supplier catalogs. Show group subtotals and a final total row.
 </form>
 ```
 
-- [ ] **Step 4: Verify and commit reports**
+- [x] **Step 4: Verify and commit reports**
 
 Run: `npx vitest run tests/unit/reports.test.ts; npm run lint; npm run build`  
 Expected: all pass.
@@ -608,7 +608,7 @@ git commit -m "feat: add operational reports"
 - Consumes: the approved palette and layout in `docs/plans/2026-09-12-technical-workbook-ui-design.md`.
 - Produces: responsive Office and technician workspaces with visible focus and reduced-motion support.
 
-- [ ] **Step 1: Implement visual tokens and responsive components**
+- [x] **Step 1: Implement visual tokens and responsive components**
 
 ```css
 :root { --paper:#f3f0e8; --ink:#1d2a35; --service:#16697a;
@@ -623,25 +623,25 @@ Apply the shared header, workbench grids, status strip, dense tables, forms,
 debt notices, empty states, and 320 px layout from the visual implementation
 plan. Use local font stacks and no decorative gradients.
 
-- [ ] **Step 2: Reset disposable data and initialize the new schema**
+- [x] **Step 2: Reset disposable data and initialize the new schema**
 
 Run: `npm run db:reset`  
 Expected: only `data/generico-servicios.db` is recreated and four fixed users are seeded.
 
-- [ ] **Step 3: Verify both roles in the browser**
+- [x] **Step 3: Verify both roles in the browser**
 
 Office: create/edit/archive a client, create supplier/material, schedule and
 reschedule a visit, assign a technician, and view all reports. Technician:
 inspect prior client history and debt notice, complete two visits on one job,
 record a material and partial payment, then finish with remaining debt.
 
-- [ ] **Step 4: Update documentation**
+- [x] **Step 4: Update documentation**
 
 Document tables, domain modules, role navigation, reset state, and test results.
 ADR 003 must record the separation of jobs, visits, financing terms, real
 payments, and derived debt. README must describe the new local test flow.
 
-- [ ] **Step 5: Run final verification and commit**
+- [x] **Step 5: Run final verification and commit**
 
 Run: `npm run docs:check-guides; npm test; npm run lint; npm run build`  
 Expected: all commands exit `0`.

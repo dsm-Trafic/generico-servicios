@@ -1,40 +1,54 @@
 # Arquitectura
 
-## Propósito y límite de la etapa
+## Alcance de la etapa local
 
-Genérico Servicios es una aplicación local para gestionar clientes, partes de
-trabajo, materiales, cobros, financiación y presupuestos internos. La primera
-etapa se usa desde el navegador de este ordenador por administración y tres
-técnicos. No hay red local, aplicación móvil ni despliegue VPS todavía.
+Genérico Servicios es una aplicación Next.js ejecutada íntegramente en este
+ordenador. Oficina y tres técnicos acceden desde el navegador a una base SQLite
+compartida. Red local, aplicación móvil, CRM, inventario y despliegue VPS quedan
+fuera de esta etapa.
 
-## Aplicación
+## Aplicación y módulos
 
-Next.js con App Router organiza las pantallas en `src/app/`: acceso, inicio,
-clientes y partes. Las mutaciones están centralizadas en `src/app/actions.ts`
-como Server Actions. `src/components/app-shell.tsx` proporciona navegación y
-contexto visual de sesión. La interfaz no sustituye la autorización: cada acción
-que modifica un parte obtiene y valida al usuario en el servidor.
+El App Router vive en `src/app/`. Las rutas principales son `/clientes`,
+`/citas`, `/partes`, `/materiales`, `/proveedores` e `/informes`; los detalles de
+cita, cliente, trabajo y nueva visita usan rutas dinámicas. Las Server Actions
+se separan por dominio en `src/app/actions/`: autenticación, clientes, catálogo,
+citas y trabajos.
 
-## Dominio y persistencia
+`src/components/app-shell.tsx` proporciona cabecera, navegación según rol y
+contexto de sesión. `src/app/globals.css` implementa el sistema visual técnico:
+papel, tinta, azul de servicio, amarillo de atención y estados accesibles. Usa
+fuentes locales, foco visible, tablas desplazables y adaptación desde 320 px.
 
-`src/lib/db.ts` abre una única base SQLite dentro de `data/` usando
-`better-sqlite3`, activa claves foráneas y WAL, crea el esquema si no existe y
-siembra las cuentas de demostración. Las entidades principales son usuarios,
-clientes, partes, materiales, movimientos financieros y presupuestos. Los
-importes se guardan como céntimos enteros; `src/lib/money.ts` convierte y
-presenta valores en UYU. `src/lib/rules.ts` concentra las reglas puras de saldo
-y permisos para que se puedan probar sin interfaz ni base de datos.
+## Modelo de datos
 
-## Identidad y roles
+`src/lib/schema.ts` define las tablas `users`, `clients`, `suppliers`,
+`materials`, `work_orders`, `appointments`, `visits`, `material_usages`,
+`payments`, `budgets` y `budget_lines`. Un trabajo pertenece a un cliente y a un
+técnico fijo; agrupa varias visitas. Una cita puede originar un trabajo o
+programar otra visita. Los consumos guardan el coste del material como
+instantánea histórica.
 
-`src/lib/auth.ts` verifica contraseñas con scrypt y guarda una sesión firmada con
-HMAC en una cookie `httpOnly`. Administración puede gestionar el conjunto de
-datos; un técnico sólo crea y opera los partes asignados a su cuenta. Las rutas
-protegidas redirigen a acceso y los recursos no autorizados no se revelan.
+SQLite se abre en `src/lib/db.ts` mediante `better-sqlite3`, con claves foráneas
+y WAL. Los importes son céntimos enteros y se convierten en `src/lib/money.ts`.
+Las reglas puras de permisos, condiciones y saldo viven en `src/lib/rules.ts`.
 
-## Operación y evolución
+## Identidad, permisos y finanzas
 
-Los scripts de npm inicializan o reinician la base y ejecutan pruebas, lint y
-build. La configuración y la base son locales e ignoradas por Git. Antes de un
-VPS se revisarán gestión de secretos, HTTPS, migraciones, copias de seguridad y
-una base de datos de servidor.
+`src/lib/auth.ts` verifica contraseñas scrypt y emite una cookie `httpOnly`
+firmada con HMAC. Oficina administra clientes, citas, catálogos e informes, pero
+no cobra. Un técnico sólo opera sus trabajos y visitas; puede crear o actualizar
+clientes y registrar materiales y cobros. El total y el técnico quedan fijos al
+iniciar la primera visita.
+
+La modalidad o las cuotas planificadas describen el acuerdo, pero no reducen la
+deuda. `payments` contiene únicamente dinero recibido; el saldo siempre se
+deriva como total menos pagos. Un trabajo puede terminar con deuda.
+
+## Informes y operación
+
+`src/lib/reports.ts` compone consultas parametrizadas y totales por cliente,
+técnico, deuda, consumo de materiales y catálogo. Los resultados se consultan y
+filtran en pantalla. `npm run db:init` prepara la base; `npm run db:reset` la
+recrea deliberadamente. Antes del VPS serán necesarios HTTPS, cookies seguras,
+secretos administrados, migraciones y copias automatizadas.
