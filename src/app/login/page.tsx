@@ -1,6 +1,6 @@
 import { currentUser } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { loginAction } from '../actions';
+import { loginAction } from '../actions/auth';
 export default async function Login({searchParams}:{searchParams:Promise<{error?:string}>}){
  if(await currentUser()) redirect('/');
  const query=await searchParams;
