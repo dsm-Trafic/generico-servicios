@@ -55,12 +55,13 @@ export async function createAppointment(data: FormData) {
     : user.id;
 
   if (workOrderId) {
-    const workOrder = db.prepare(`SELECT client_id,assigned_technician_id
+    const workOrder = db.prepare(`SELECT client_id,assigned_technician_id,status
       FROM work_orders WHERE id=?`).get(workOrderId) as
-      { client_id: string; assigned_technician_id: string } | undefined;
+      { client_id: string; assigned_technician_id: string; status: string } | undefined;
     if (!workOrder || workOrder.client_id !== clientId) {
       throw new Error('WORK_ORDER_CLIENT_MISMATCH');
     }
+    if (workOrder.status === 'TERMINADO') throw new Error('WORK_ORDER_CLOSED');
     assertCanScheduleVisit(
       user.role,
       user.id,
